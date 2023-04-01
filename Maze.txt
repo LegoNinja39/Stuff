@@ -1,0 +1,45 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Maze {
+  public:
+  Maze(){BuildChamber();}
+  ~Maze(){}
+
+  static const int MAZE_WIDTH = 10;
+  static const int MAZE_HEIGHT = 10;
+  static const int MAZE_SIZE = MAZE_WIDTH * MAZE_HEIGHT;
+  string mazeBoard[MAZE_SIZE] = {"$"};
+
+  void Display(){
+    for (int i = 0; i < MAZE_SIZE; i++){
+      if (i % MAZE_WIDTH == 0 && i != 0)
+        cout << endl;
+
+      cout << mazeBoard[i];
+    }
+  }
+
+  void BuildChamber(){
+    for (int x = 0; x < MAZE_WIDTH; x++){
+      for (int y = 0; y < MAZE_HEIGHT; y++){
+        if (x == 0 || x == (MAZE_WIDTH - 1)){
+          mazeBoard[MAZE_WIDTH * x + y] = "-";
+        }
+        else if(y == 0 || y == (MAZE_HEIGHT - 1)){
+          mazeBoard[MAZE_WIDTH * x + y] = "|";
+        }
+	      else {
+	        mazeBoard[MAZE_WIDTH * x + y] = "$";
+        }
+      }
+    }
+  }
+};
+
+int main() {
+  Maze test = Maze();
+  test.Display();
+}

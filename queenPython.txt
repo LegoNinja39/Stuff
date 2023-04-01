@@ -1,0 +1,90 @@
+
+board = [None] * 16
+for i in range(16):
+  board[i] = [None] * 16
+locations = [9,9,9,9,9,9,9,9]
+solutionCount = 1
+
+def ClearBoard():
+  for row in range(15):
+    for column in range(15):
+      if row % 2 == 1:
+        if column % 2 == 1:
+          board[row][column] = "-"
+        else:
+          board[row][column] = "---"
+      else:
+        if column % 2 == 1:
+          board[row][column] = "|"
+        else:
+          board[row][column] = " * "
+  return
+
+def DisplayBoard():
+  displayBuffer = ""
+  for row in range(15):
+    for column in range(15):
+      displayBuffer += board[row][column]
+    print(displayBuffer)
+    displayBuffer = ""
+  ClearBoard()
+  return
+
+def DrawBoard():
+  for i in range(8):
+    if locations[i] * 2 < 15:
+      board[locations[i] * 2][i * 2] = " Q "
+  return
+
+def CheckRow(x):
+  for element in locations:
+    if element == x:
+      return False
+  return True
+
+def CheckDiag(x, y):
+  char i = 1;
+  #Top Left
+  while (col-i >= 0){
+    if (locations[col-i] == row-i)
+      return false;
+    ++i;
+  }
+  i = 1;
+  Bottom Left
+      while (col-i >= 0){
+        if (locations[col-i] == row+i)
+          return false;
+        ++i;
+      }
+      return true;
+
+def PlacePiece():
+  row = 0
+  col = 0
+  finalSolution = False
+
+  while col < 8:
+    if row > 7:
+      col -= 1
+      if col <= 0:
+        col = 9
+        finalSolution = True
+        break
+      else:
+        row = locations[col] + 1
+        locations[col] = 9
+    if CheckRow(row):
+      #if CheckDiag():
+      locations[col] = row;
+      row = 0
+      col += 1
+      #else:
+        #row += 1
+    else: row += 1
+  return finalSolution
+
+ClearBoard()
+PlacePiece()
+DrawBoard()
+DisplayBoard()

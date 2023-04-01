@@ -1,0 +1,111 @@
+board = [[None] * 16 for i in range(16)]
+locations = [9,9,9,9,9,9,9,9]
+solutionCount = int(1)
+currentCoord = [0,0]
+
+def ClearBoard():
+  for row in range(15):
+    for column in range(15):
+      if row % 2 == 1:
+        if column % 2 == 1:
+          board[row][column] = "-"
+        else:
+          board[row][column] = "---"
+      else:
+        if column % 2 == 1:
+          board[row][column] = "|"
+        else:
+          board[row][column] = " * "
+  return
+
+def DisplayBoard():
+  displayBuffer = ""
+  for row in range(15):
+    for column in range(15):
+      displayBuffer += board[row][column]
+    print(displayBuffer)
+    displayBuffer = ""
+  ClearBoard()
+  return
+
+def DrawBoard():
+  for i in range(8):
+    if locations[i] * 2 < 15:
+      board[locations[i] * 2][i * 2] = " Q "
+  return
+
+def CheckRow(y):
+  for element in locations:
+    if element == y:
+      return False
+  return True
+
+def CheckDiag(y, x):
+  i = 1;
+  #Top Left
+  while x - i >= 0:
+    if locations[x - i] == y - i:
+      return False
+    i += 1
+
+  i = 1
+  #Bottom Left
+  while x - i >= 0:
+    if locations[x - i] == y + i:
+      return False
+    i += 1
+
+  return True
+
+def PlacePiece(newRow, newCol):
+  row = newRow
+  col = newCol
+  finalSolution = False
+
+  while col < 8:
+    if row > 7:
+      col -= 1
+      if col <= 0:
+        col = 9
+        finalSolution = True
+        break
+      else:
+        row = locations[col] + 1
+        locations[col] = 9
+    if CheckRow(row):
+      if CheckDiag(row, col):
+        locations[col] = row;
+        row = 0
+        col += 1
+      else:
+        row += 1
+    else:
+      row += 1
+      
+  return finalSolution
+
+def NextSolution():
+  nextCoord = [9,9]
+  for i in range(7, 0, -1):
+    if locations[i] <= 6:
+      nextCoord[0] = locations[i] + 1
+      nextCoord[1] = i
+      locations[i] = 9
+      return nextCoord
+    elif i == 0:
+      nextCoord[0] = 0
+      nextCoord[1] = locations[i] + 1
+      locations[i] = 9
+      return nextCoord
+    else: locations[i] = 9
+  return nextCoord
+
+while solutionCount <= 92:
+  if not PlacePiece(currentCoord[0], currentCoord[1]):
+    DrawBoard()
+    DisplayBoard()
+
+ClearBoard()
+PlacePiece()
+DrawBoard()
+DisplayBoard()
