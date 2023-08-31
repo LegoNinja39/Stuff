@@ -1,14 +1,21 @@
-
-board = [None] * 16
-for i in range(16):
-  board[i] = [None] * 16
-locations = [9,9,9,9,9,9,9,9]
+BOARD_SIZE = int(input("Board size: ")) * 2 # Change this to input
+EMPTY = 999 # Indicates no queen
+# Every other row is just for display
+board = [[None for i in range(BOARD_SIZE)] for i in range(BOARD_SIZE)]
+locations = [EMPTY for i in range(int(BOARD_SIZE * 0.5))]
+NUM_LOCATIONS = len(locations)
 solutionCount = 1
 
-def ClearBoard():
-  for row in range(15):
-    for column in range(15):
+
+# Clears the board
+def ClearBoard() -> None:
+  for row in range(BOARD_SIZE):
+    for column in range(BOARD_SIZE):
+      # If the row is odd
+      #   it is just for display
       if row % 2 == 1:
+        # Odd columns are always in line with '|'
+        # Even ones are where 'Q's go
         if column % 2 == 1:
           board[row][column] = "-"
         else:
@@ -17,74 +24,69 @@ def ClearBoard():
         if column % 2 == 1:
           board[row][column] = "|"
         else:
-          board[row][column] = " * "
-  return
+          board[row][column] = "   "
 
-def DisplayBoard():
+
+# Displays the board
+def DisplayBoard() -> None:
+  ClearBoard()
+  DrawBoard()
+  # Holds each line
   displayBuffer = ""
-  for row in range(15):
-    for column in range(15):
+  for row in range(BOARD_SIZE):
+    for column in range(BOARD_SIZE):
       displayBuffer += board[row][column]
     print(displayBuffer)
     displayBuffer = ""
-  ClearBoard()
-  return
 
-def DrawBoard():
-  for i in range(8):
-    if locations[i] * 2 < 15:
-      board[locations[i] * 2][i * 2] = " Q "
-  return
 
-def CheckRow(x):
-  for element in locations:
-    if element == x:
-      return False
-  return True
+# Adds the queens to the board from the list
+def DrawBoard() -> None:
+  for i, e in enumerate(locations):
+    # The index is the column and
+    #  the element is the row
+    #  multiply by 2 so it skips display rows/columns
+    if e != EMPTY:
+      board[e * 2][i * 2] = " Q " 
 
-def CheckDiag(x, y):
-  char i = 1;
-  #Top Left
-  while (col-i >= 0){
-    if (locations[col-i] == row-i)
-      return false;
-    ++i;
-  }
-  i = 1;
-  Bottom Left
-      while (col-i >= 0){
-        if (locations[col-i] == row+i)
-          return false;
-        ++i;
-      }
-      return true;
 
-def PlacePiece():
+# Checks diagonals
+def CheckDiag(row: int, col: int) -> bool:
+  # Works backwards from the initial location
+  for i in range(1, col + 1):
+    if (locations[col - i] == row - i) or (locations[col - i] == row + i):
+      return True
+  else:
+    return False
+
+
+# Places all the pieces
+def PlacePieces() -> None:
   row = 0
   col = 0
-  finalSolution = False
-
-  while col < 8:
-    if row > 7:
+    
+  # Will keep looping until the column hits length of locations
+  #  which means all the pieces have been placed
+  while col < NUM_LOCATIONS:
+    # If the row is greater than the board, backtrack
+    if row >= NUM_LOCATIONS:
+      locations[col] = EMPTY
       col -= 1
-      if col <= 0:
-        col = 9
-        finalSolution = True
-        break
+      if col < 0:
+        return
+      row = locations[col]
+    else:
+      # If there is a queen in that row move on
+      if row in locations:
+        row += 1
+      # If there is a diagonal attach move on
+      elif CheckDiag(row, col):
+        row += 1
       else:
-        row = locations[col] + 1
-        locations[col] = 9
-    if CheckRow(row):
-      #if CheckDiag():
-      locations[col] = row;
-      row = 0
-      col += 1
-      #else:
-        #row += 1
-    else: row += 1
-  return finalSolution
+        locations[col] = row
+        col += 1
+        row = 0
 
-ClearBoard()
-PlacePiece()
-DrawBoard()
+
+PlacePieces()
 DisplayBoard()
